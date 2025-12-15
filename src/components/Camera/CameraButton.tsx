@@ -1,17 +1,5 @@
 'use client'
 
-/**
- * CameraButton Component
- *
- * A large, accessible camera button for the home page.
- * - Size: 80x80px circular button
- * - Mobile-optimized touch target
- * - Clear visual feedback on interaction
- *
- * Usage:
- *   <CameraButton onClick={handleClick} disabled={loading} />
- */
-
 import { useState } from 'react'
 
 interface CameraButtonProps {
@@ -50,7 +38,7 @@ export default function CameraButton({
       onMouseUp={handleTouchEnd}
       onMouseLeave={handleTouchEnd}
       disabled={disabled || loading}
-      aria-label={loading ? 'U-...' : 'ÍßÁgG'}
+      aria-label={loading ? 'Processing...' : 'Capture food photo'}
       className={`
         relative
         flex items-center justify-center
@@ -67,18 +55,16 @@ export default function CameraButton({
         ${loading ? 'animate-pulse' : ''}
       `}
     >
-      {/* Camera Icon */}
       {loading ? (
         <div className="flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
-        <span className="text-5xl leading-none" role="img" aria-label="ø_">
+        <span className="text-5xl leading-none" role="img" aria-label="camera">
           =÷
         </span>
       )}
 
-      {/* Ripple effect */}
       {!disabled && !loading && (
         <span
           className={`

@@ -1,17 +1,5 @@
 'use client'
 
-/**
- * ImageUpload Component
- *
- * Handles image file selection and camera capture.
- * - Supports both file upload and camera capture
- * - Validates image format and size
- * - Automatically compresses large images
- *
- * Usage:
- *   <ImageUpload onImageSelected={handleImage} onError={handleError} />
- */
-
 import { useRef, ChangeEvent } from 'react'
 import { validateImage, compressImage, getMimeType } from '@/lib/image'
 import { CaptureResult } from '@/types'
@@ -38,28 +26,23 @@ export default function ImageUpload({
       return
     }
 
-    // Reset input value to allow selecting the same file again
     event.target.value = ''
 
     try {
-      // Validate image
       const { isValid, error } = validateImage(file)
       if (!isValid) {
-        onError?.(error || '!HÑGîH')
+        onError?.(error || 'Invalid image file')
         return
       }
 
-      // Compress image if needed
       const compressedBlob = await compressImage(file)
 
-      // Convert to File object
       const compressedFile = new File(
         [compressedBlob],
         file.name,
         { type: getMimeType(compressedBlob) }
       )
 
-      // Create data URL for preview
       const reader = new FileReader()
       reader.onload = (e) => {
         const dataUrl = e.target?.result as string
@@ -71,7 +54,7 @@ export default function ImageUpload({
         }
       }
       reader.onerror = () => {
-        onError?.('Ä÷G1WÀÕf')
+        onError?.('Failed to read image, please try again')
       }
       reader.readAsDataURL(compressedBlob)
     } catch (error) {
@@ -79,7 +62,7 @@ export default function ImageUpload({
       onError?.(
         error instanceof Error
           ? error.message
-          : 'UGB|/§'
+          : 'Error processing image'
       )
     }
   }
@@ -92,7 +75,6 @@ export default function ImageUpload({
 
   return (
     <div className="relative">
-      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -101,10 +83,9 @@ export default function ImageUpload({
         onChange={handleFileSelect}
         disabled={disabled}
         className="hidden"
-        aria-label="x«Õﬂ¡gG"
+        aria-label="Select or capture food photo"
       />
 
-      {/* Trigger element (button or custom children) */}
       {children ? (
         <div onClick={handleButtonClick} role="button" tabIndex={0}>
           {children}
@@ -114,16 +95,9 @@ export default function ImageUpload({
           type="button"
           onClick={handleButtonClick}
           disabled={disabled}
-          className="
-            px-6 py-3
-            bg-blue-600 hover:bg-blue-700
-            text-white font-semibold
-            rounded-lg shadow-md
-            transition-colors duration-200
-            disabled:opacity-50 disabled:cursor-not-allowed
-          "
+          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          x«gG
+          Select Photo
         </button>
       )}
     </div>

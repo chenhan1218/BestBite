@@ -37,7 +37,9 @@ export default function ImagePreview({
         ) : (
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-500">
-              <span className="text-6xl mb-4 block">=¼</span>
+              <svg className="w-24 h-24 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
               <p className="text-lg">Image load failed</p>
             </div>
           </div>
@@ -57,28 +59,19 @@ export default function ImagePreview({
       {showActions && !loading && (
         <div className="flex gap-4 mt-6">
           {onCancel && (
-            <button
-              onClick={onCancel}
-              className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg shadow-md transition-colors duration-200"
-            >
+            <button onClick={onCancel} className="flex-1 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold rounded-lg shadow-md transition-colors duration-200">
               Cancel
             </button>
           )}
 
           {onRetry && (
-            <button
-              onClick={onRetry}
-              className="flex-1 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
-            >
+            <button onClick={onRetry} className="flex-1 px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md transition-colors duration-200">
               Retake
             </button>
           )}
 
           {onConfirm && (
-            <button
-              onClick={onConfirm}
-              className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200"
-            >
+            <button onClick={onConfirm} className="flex-1 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-colors duration-200">
               Recognize
             </button>
           )}
@@ -87,9 +80,7 @@ export default function ImagePreview({
 
       {!loading && (
         <p className="text-center text-sm text-gray-500 mt-4">
-          {showActions
-            ? 'Ensure product name and expiry date are clearly visible'
-            : 'Photo preview'}
+          {showActions ? 'Ensure product name and expiry date are clearly visible' : 'Photo preview'}
         </p>
       )}
     </div>
