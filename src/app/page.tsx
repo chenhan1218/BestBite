@@ -3,11 +3,17 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { CameraButton, ImageUpload, ImagePreview } from '@/components/Camera'
-import { CaptureResult } from '@/types'
+import { ConfirmationModal } from '@/components/Modal'
+import { CaptureResult, GeminiResponse } from '@/types'
+import { fileToBase64, getMimeType } from '@/lib/image'
 
 export default function Home() {
   const [capturedImage, setCapturedImage] = useState<CaptureResult | null>(null)
   const [error, setError] = useState<string>('')
+  const [recognizing, setRecognizing] = useState(false)
+  const [aiResult, setAiResult] = useState<GeminiResponse | null>(null)
+  const [showModal, setShowModal] = useState(false)
+  const [saving, setSaving] = useState(false)
 
   const handleImageSelected = (result: CaptureResult) => {
     setCapturedImage(result)
@@ -21,13 +27,85 @@ export default function Home() {
 
   const handleRetry = () => {
     setCapturedImage(null)
+    setAiResult(null)
+    setShowModal(false)
     setError('')
   }
 
   const handleConfirm = async () => {
-    // TODO: Phase 3 - Call Gemini API
-    console.log('Image confirmed, ready to send to Gemini API')
-    alert('AI 識別功能將在階段 3 實作')
+    if (!capturedImage) return
+
+    setRecognizing(true)
+    setError('')
+
+    try {
+      // Convert image to base64
+      const base64 = await fileToBase64(capturedImage.file)
+      const mimeType = getMimeType(capturedImage.file)
+
+      // Call Gemini API
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64,
+          mimeType: mimeType,
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'AI recognition failed')
+      }
+
+      const result: GeminiResponse = await response.json()
+
+      // Show confirmation modal with AI result
+      setAiResult(result)
+      setShowModal(true)
+
+    } catch (err) {
+      console.error('Error calling Gemini API:', err)
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'AI recognition failed. Please try again.'
+      )
+    } finally {
+      setRecognizing(false)
+    }
+  }
+
+  const handleModalConfirm = async (productName: string, expiryDate: string) => {
+    setSaving(true)
+
+    try {
+      // TODO: Phase 4 - Save to Firestore
+      console.log('Saving to Firestore:', { productName, expiryDate })
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      alert(`Product saved!\nName: ${productName}\nExpiry: ${expiryDate}`)
+
+      // Reset state
+      setCapturedImage(null)
+      setAiResult(null)
+      setShowModal(false)
+
+    } catch (err) {
+      console.error('Error saving food item:', err)
+      setError('Failed to save product. Please try again.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleModalCancel = () => {
+    setShowModal(false)
+    setAiResult(null)
   }
 
   return (
@@ -46,6 +124,7 @@ export default function Home() {
             imageUrl={capturedImage.dataUrl}
             onRetry={handleRetry}
             onConfirm={handleConfirm}
+            loading={recognizing}
             showActions={true}
           />
         ) : (
@@ -69,6 +148,21 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      {/* Confirmation Modal */}
+      {aiResult && (
+        <ConfirmationModal
+          isOpen={showModal}
+          imageUrl={capturedImage?.dataUrl || ''}
+          productName={aiResult.product_name}
+          expiryDate={aiResult.expiry_date}
+          confidence={aiResult.confidence}
+          notes={aiResult.notes}
+          onConfirm={handleModalConfirm}
+          onCancel={handleModalCancel}
+          loading={saving}
+        />
+      )}
 
       <section className="bg-white rounded-lg shadow-md p-6">
         <h3 className="text-xl font-semibold mb-3">快速統計</h3>
