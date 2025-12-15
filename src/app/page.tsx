@@ -1,6 +1,35 @@
+'use client'
+
 import Link from 'next/link'
+import { useState } from 'react'
+import { CameraButton, ImageUpload, ImagePreview } from '@/components/Camera'
+import { CaptureResult } from '@/types'
 
 export default function Home() {
+  const [capturedImage, setCapturedImage] = useState<CaptureResult | null>(null)
+  const [error, setError] = useState<string>('')
+
+  const handleImageSelected = (result: CaptureResult) => {
+    setCapturedImage(result)
+    setError('')
+  }
+
+  const handleError = (errorMessage: string) => {
+    setError(errorMessage)
+    setCapturedImage(null)
+  }
+
+  const handleRetry = () => {
+    setCapturedImage(null)
+    setError('')
+  }
+
+  const handleConfirm = async () => {
+    // TODO: Phase 3 - Call Gemini API
+    console.log('Image confirmed, ready to send to Gemini API')
+    alert('AI 識別功能將在階段 3 實作')
+  }
+
   return (
     <div className="space-y-6">
       <section className="bg-white rounded-lg shadow-md p-6">
@@ -11,19 +40,34 @@ export default function Home() {
           拍攝食品包裝，AI 自動辨識品名與有效期限
         </p>
 
-        {/* Camera button placeholder - will be implemented in Phase 2 */}
-        <div className="flex justify-center">
-          <button
-            className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-full shadow-lg flex items-center gap-3 text-button"
-            style={{ width: '80px', height: '80px' }}
-            disabled
-          >
-            📷
-          </button>
-        </div>
-        <p className="text-center text-sm text-gray-500 mt-4">
-          相機功能開發中...
-        </p>
+        {/* Image Preview or Camera Button */}
+        {capturedImage ? (
+          <ImagePreview
+            imageUrl={capturedImage.dataUrl}
+            onRetry={handleRetry}
+            onConfirm={handleConfirm}
+            showActions={true}
+          />
+        ) : (
+          <div className="flex flex-col items-center">
+            <ImageUpload
+              onImageSelected={handleImageSelected}
+              onError={handleError}
+            >
+              <CameraButton />
+            </ImageUpload>
+            <p className="text-center text-sm text-gray-500 mt-4">
+              點擊拍攝或上傳食品照片
+            </p>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700 text-center">{error}</p>
+          </div>
+        )}
       </section>
 
       <section className="bg-white rounded-lg shadow-md p-6">
