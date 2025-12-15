@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-body text-gray-900;
+  }
+
+  /* Ensure minimum touch target size for accessibility */
+  button, a {
+    min-width: 56px;
+    min-height: 56px;
+  }
+}
+
+@layer utilities {
+  /* WCAG AAA contrast utilities */
+  .contrast-high {
+    filter: contrast(1.2);
+  }
+
+  /* Touch-friendly spacing */
+  .touch-spacing {
+    @apply p-4 m-2;
+  }
+}
