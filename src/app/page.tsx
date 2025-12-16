@@ -6,8 +6,13 @@ import { CameraButton, ImageUpload, ImagePreview } from '@/components/Camera'
 import { ConfirmationModal } from '@/components/Modal'
 import { CaptureResult, GeminiResponse } from '@/types'
 import { fileToBase64, getMimeType } from '@/lib/image'
+import { useFoodContext } from '@/context/FoodContext'
+import { useFoodItems } from '@/hooks/useFoodItems'
 
 export default function Home() {
+  const { stats } = useFoodContext()
+  const { addFoodItem } = useFoodItems()
+
   const [capturedImage, setCapturedImage] = useState<CaptureResult | null>(null)
   const [error, setError] = useState<string>('')
   const [recognizing, setRecognizing] = useState(false)
@@ -79,21 +84,29 @@ export default function Home() {
   }
 
   const handleModalConfirm = async (productName: string, expiryDate: string) => {
+    if (!capturedImage || !aiResult) return
+
     setSaving(true)
 
     try {
-      // TODO: Phase 4 - Save to Firestore
-      console.log('Saving to Firestore:', { productName, expiryDate })
+      const result = await addFoodItem(
+        productName,
+        expiryDate,
+        capturedImage.file,
+        aiResult.confidence
+      )
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      if (result) {
+        alert(`Product saved successfully!\nName: ${productName}\nExpiry: ${expiryDate}`)
 
-      alert(`Product saved!\nName: ${productName}\nExpiry: ${expiryDate}`)
-
-      // Reset state
-      setCapturedImage(null)
-      setAiResult(null)
-      setShowModal(false)
+        // Reset state
+        setCapturedImage(null)
+        setAiResult(null)
+        setShowModal(false)
+        setError('')
+      } else {
+        throw new Error('Failed to save product')
+      }
 
     } catch (err) {
       console.error('Error saving food item:', err)
@@ -168,15 +181,15 @@ export default function Home() {
         <h3 className="text-xl font-semibold mb-3">快速統計</h3>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="p-4 bg-red-50 rounded-lg">
-            <div className="text-3xl font-bold text-status-red">0</div>
+            <div className="text-3xl font-bold text-status-red">{stats.red}</div>
             <div className="text-sm text-gray-600 mt-1">緊急</div>
           </div>
           <div className="p-4 bg-yellow-50 rounded-lg">
-            <div className="text-3xl font-bold text-status-yellow">0</div>
+            <div className="text-3xl font-bold text-status-yellow">{stats.yellow}</div>
             <div className="text-sm text-gray-600 mt-1">注意</div>
           </div>
           <div className="p-4 bg-green-50 rounded-lg">
-            <div className="text-3xl font-bold text-status-green">0</div>
+            <div className="text-3xl font-bold text-status-green">{stats.green}</div>
             <div className="text-sm text-gray-600 mt-1">安全</div>
           </div>
         </div>

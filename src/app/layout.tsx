@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { FoodProvider } from '@/context/FoodContext'
 
 export const metadata: Metadata = {
   title: 'BestBite - 食品庫存管理',
@@ -21,12 +22,14 @@ export default function RootLayout({
   return (
     <html lang="zh-TW">
       <body className="bg-gray-50 min-h-screen">
-        <header className="bg-green-600 text-white p-4 shadow-md">
-          <h1 className="text-title font-bold text-center">BestBite</h1>
-        </header>
-        <main className="container mx-auto px-4 py-6 max-w-2xl">
-          {children}
-        </main>
+        <FoodProvider>
+          <header className="bg-green-600 text-white p-4 shadow-md">
+            <h1 className="text-title font-bold text-center">BestBite</h1>
+          </header>
+          <main className="container mx-auto px-4 py-6 max-w-2xl">
+            {children}
+          </main>
+        </FoodProvider>
       </body>
     </html>
   )
