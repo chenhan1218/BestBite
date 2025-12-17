@@ -45,8 +45,14 @@ function getOrInitializeApp(): FirebaseApp {
 /**
  * Validate that all required Firebase environment variables are set
  * Throws error if any critical config is missing
+ * Skips validation in test environment
  */
 function validateFirebaseConfig(): void {
+  // Skip validation during tests
+  if (process.env.NODE_ENV === 'test') {
+    return
+  }
+
   const requiredKeys = [
     'apiKey',
     'authDomain',
@@ -81,7 +87,11 @@ const STORAGE_KEYS = {
  * Uses crypto.getRandomValues() for browser compatibility
  */
 export function generateUUID(): string {
-  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+  if (
+    typeof window !== 'undefined' &&
+    window.crypto &&
+    typeof window.crypto.getRandomValues === 'function'
+  ) {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
       const r = (Math.random() * 16) | 0
       const v = c === 'x' ? r : (r & 0x3) | 0x8
