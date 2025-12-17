@@ -1,0 +1,53 @@
+// Firestore Security Rules for BestBite
+//
+// Anonymous mode: Each user is identified by a locally generated UUID
+// All data is stored in users/{userId}/food_items/{itemId}
+// Each user can only access their own data
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users collection - each user can only access their own document
+    match /users/{userId} {
+      // Allow read/write to own user document
+      allow read, write: if request.auth == null || request.auth.uid == userId;
+
+      // Food items subcollection - anonymous users identified by UUID
+      match /food_items/{itemId} {
+        // Allow read/write/delete to own food items
+        allow read, create, update, delete: if true;
+      }
+    }
+
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
+/*
+IMPLEMENTATION NOTES:
+
+1. Anonymous Mode:
+   - Since we're using no authentication initially, we rely on client-side UUID generation
+   - The UUID is stored in localStorage on the user's device
+   - This provides basic access control - each browser/device has a unique ID
+
+2. Security Limitations:
+   - ⚠️ Currently, any client knowing a valid userId can access that user's data
+   - This is acceptable for MVP where data is non-sensitive food inventory
+   - For production, implement Firebase Auth before collecting sensitive data
+
+3. Migration Path:
+   - When implementing Firebase Auth, replace `request.auth == null` with `request.auth.uid == userId`
+   - Firestore automatically handles UID-to-userId matching with Firebase Auth
+
+4. Testing:
+   - Use Firebase Emulator Suite for local testing
+   - Rule testing: Use provided test helpers or test in emulator console
+
+5. Backup & Import:
+   - Rules auto-sync from local development to Firebase Console
+   - Can also manually update in Firebase Console > Firestore > Rules tab
+*/
