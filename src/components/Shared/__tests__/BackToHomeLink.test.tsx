@@ -12,7 +12,7 @@ jest.mock('@/styles/themes', () => ({
 }))
 
 jest.mock('next/link', () => {
-  return ({
+  const LinkMock = ({
     children,
     href,
     className,
@@ -25,6 +25,8 @@ jest.mock('next/link', () => {
       {children}
     </a>
   )
+  LinkMock.displayName = 'Link'
+  return LinkMock
 })
 
 describe('BackToHomeLink Component', () => {

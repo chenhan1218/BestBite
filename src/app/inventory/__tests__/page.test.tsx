@@ -9,11 +9,14 @@ jest.mock('@/components', () => ({
   EmptyInventoryPlaceholder: () => (
     <div data-testid="empty-placeholder">Empty Inventory</div>
   ),
-  BackToHomeLink: () => (
-    <a href="/" data-testid="back-link">
-      ← 返回首頁
-    </a>
-  ),
+  BackToHomeLink: () => {
+    return (
+      // eslint-disable-next-line @next/next/no-html-link-for-pages
+      <a href="/" data-testid="back-link">
+        ← 返回首頁
+      </a>
+    )
+  },
 }))
 
 describe('Inventory Page', () => {
