@@ -45,8 +45,14 @@ function getOrInitializeApp(): FirebaseApp {
 /**
  * Validate that all required Firebase environment variables are set
  * Throws error if any critical config is missing
+ * Skips validation in test environment
  */
 function validateFirebaseConfig(): void {
+  // Skip validation during tests
+  if (process.env.NODE_ENV === 'test') {
+    return
+  }
+
   const requiredKeys = [
     'apiKey',
     'authDomain',
