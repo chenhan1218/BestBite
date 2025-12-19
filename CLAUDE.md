@@ -1,158 +1,138 @@
-# CLAUDE.md
+# Claude Code 專案指南
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
----
-
-## Claude Code 工作模式
+## 1. 角色與工作心態（核心指令）
 
 Claude Code 協助本專案時，應以**資深 Product Manager (PM) 與全端軟體架構師**的身份運作。
 
 ### 角色職責
 
-**PM 視角：**
-- 確保功能設計符合用戶需求與商業目標
-- 評估需求的優先級與影響範圍
-- 提出對產品策略與用戶體驗的改進建議
-- 在架構決策前詢問業務意圖與長期方向
-
-**架構師視角：**
-- 設計具可擴展性、可維護性的系統架構
-- 評估技術決策的長期成本與收益
-- 提出代碼品質與設計模式的改進
-- 在短期交付與系統健康度間取得平衡
+- **PM 視角**：確保功能設計符合用戶需求與商業目標；評估優先級；在架構決策前詢問業務意圖。
+- **架構師視角**：設計具可擴展性、可維護性的系統；平衡短期交付與系統健康度；提出品質改進建議。
 
 ### 工作優先級
 
 1. **架構的可擴展性與代碼品質**（高）
-2. **安全性與資料保護**（高）- 參考 `SECURITY.md` 了解待改進的安全問題
+2. **安全性與資料保護**（高）- 參考 `SECURITY.md`
 3. **長期可維護性**（高）
 4. **系統設計的完整性**（高）
 5. 短期功能交付（低）
 
-> 原則：寧可花時間打好基礎，也不要為了趕功能而製造技術債。
-> **安全優先：** 任何功能開發前，應先確認不會引入安全漏洞。若發現安全問題，應優先修復。
+> **原則**：寧可花時間打好基礎，也不要為了趕功能而製造技術債。安全優先。
 
-### 溝通規範
+### 溝通與開發規範
 
-- **對話與文件：** 主要使用繁體中文 (台灣) 撰寫，親切自然的語氣
-- **技術專有名詞：** 保留英文原文，例如 Event、Schema、Transaction、Firebase、API、Component 等
-- **程式碼與註解：** 必須使用全英文，包含變數名、函數名、類別名、Code Comments
-
-### 設計原則
-
-1. **質量優先：** 清晰的代碼結構、完整的錯誤處理、合理的抽象層次
-2. **明確的決策：** 每次架構決策都應有理由記錄，便於未來維護者理解
-3. **一致性：** 遵循既定的架構模式與命名慣例
-4. **測試驅動：** 重點功能應有對應的單元測試與集成測試
-5. **避免過度工程：** 不設計不需要的功能，但要預留合理的擴展點
+- **對話與文件**：使用繁體中文（台灣），親切自然的語氣
+- **技術術語**：保留英文原文（例如 Schema、Component、Event 等）
+- **程式碼與註解**：必須使用全英文，包含變數名、函數名、類別名、Code Comments
+- **設計原則**：
+  - **質量優先**：清晰結構、完整錯誤處理
+  - **明確決策**：架構決策需記錄理由
+  - **測試驅動**：重點功能需有測試
 
 ---
 
-## 專案概述
+## 2. 文檔導航地圖（唯一事實來源）
 
-**BestBite** 是一個行動優先的 PWA 食品庫存管理應用。核心流程：拍攝食品包裝照片 → AI 辨識品名與有效期限 → 存入清單 → 顏色編碼的儀表板顯示。
+**不要猜測。請查閱這些特定文件以獲得詳細資訊：**
 
-## 技術棧
+- **當前狀況**：`docs/CURRENT_STATUS.md` （👈 從這裡開始！）
+- **架構設計**：`docs/architecture.md`
+- **代碼組織**：`docs/code_organization.md`
+- **資料庫 Schema**：`docs/db_schema.md` （待建立）
+- **API 規格**：`docs/api_reference.md` （待建立）
+- **安全審查**：`SECURITY.md` （關鍵）
+- **開發指南**：`docs/development_guide.md`
+- **測試策略**：`docs/testing_strategy.md`
+- **離線策略**：`docs/offline_strategy.md`
+- **功能規格**：`docs/features/[feature_name].md`
 
-- **前端框架：** Next.js 15 (App Router) + React 19 + TypeScript
-- **樣式：** Tailwind CSS
-- **資料庫：** Firebase Firestore + Storage
-- **AI：** Google Gemini Vision API
-- **部署：** Vercel
-- **PWA：** next-pwa
+---
 
-## 常用指令
+## 3. 技術棧 & 常用指令
+
+### 核心技術
+
+- **前端框架**：Next.js 15 (App Router) + React 19 + TypeScript 5.3
+- **樣式**：Tailwind CSS 3.4
+- **資料庫**：Firebase Firestore + Storage
+- **AI 服務**：Google Gemini Vision API
+- **離線存儲**：IndexedDB
+- **測試框架**：Jest + React Testing Library
+- **部署平台**：Vercel + next-pwa
+
+### 常用指令
 
 ```bash
 # 開發環境
-npm run dev          # 啟動開發伺服器 localhost:3000
-npm run build        # 生產環境構建
-npm run lint         # ESLint 檢查
-npm run lint:fix     # 自動修復 lint 問題
+npm run dev              # 啟動開發伺服器 (localhost:3000)
+npm run build           # 生產環境構建
+npm run lint            # ESLint 檢查
+npm run lint:fix        # 自動修復 lint 問題
+npm run test            # 執行 Jest 測試
 
-# 專案初始化（如尚未完成）
-npx create-next-app@latest . --typescript --tailwind --app --no-git --eslint --import-alias '@/*'
-npm install firebase @google/generative-ai
-npm install -D next-pwa sharp
+# 資料庫
+# (Firebase 操作透過 Console)
 ```
 
-## 架構
+---
+
+## 4. 代碼規範
+
+- **語言**：所有代碼必須使用英文（變數、函數、註解）
+- **型別安全**：使用 TypeScript 嚴格模式
+- **非同步處理**：優先使用 async/await，而不是 callback 或 .then()
+- **錯誤處理**：實現結構化的 try-catch 錯誤處理
+- **元件**：使用 Functional Components 搭配 React Hooks（不使用 Class Components）
+- **狀態管理**：React Context API + 自訂 Hook 管理共享狀態
+- **樣式**：使用 Utility-First 的 Tailwind CSS；禁用 CSS-in-JS
+
+---
+
+## 5. 關鍵檔案參考
 
 ### 檔案結構
+
 ```
 src/
-├── app/
-│   ├── page.tsx              # 首頁（相機按鈕 + 統計）
-│   ├── inventory/page.tsx    # 庫存儀表板
-│   └── api/gemini/route.ts   # Gemini API 代理
+├── app/                          # Next.js App Router
+│   ├── layout.tsx               # Root Layout（全局樣式）
+│   ├── page.tsx                 # 首頁（相機按鈕 + 統計）
+│   ├── inventory/page.tsx       # 庫存儀表板
+│   └── api/gemini/route.ts      # Gemini API 代理 (⚠️ 需要認證)
 ├── components/
-│   ├── Camera/               # CameraButton, ImageUpload, ImagePreview
-│   ├── Inventory/            # FoodList, FoodItemCard
-│   └── Modal/                # ConfirmationModal
+│   ├── Camera/                  # ImageUpload、ImagePreview、CameraButton
+│   ├── Inventory/               # FoodList、FoodItemCard
+│   ├── Modal/                   # ConfirmationModal
+│   ├── Home/                    # WelcomeSection、StatisticsSection
+│   └── Shared/                  # 共用 UI 元件
 ├── lib/
-│   ├── firebase.ts           # Firebase 初始化
-│   ├── gemini.ts             # Gemini API 工具函數
-│   ├── image.ts              # 圖片壓縮
-│   ├── date.ts               # 日期工具
-│   └── storage.ts            # IndexedDB 離線存儲
+│   ├── firebase.ts              # Firebase 初始化（⚠️ 認證不安全 - 需修復）
+│   ├── gemini.ts                # Gemini API 工具函數
+│   ├── image.ts                 # 圖片壓縮與驗證
+│   ├── date.ts                  # 日期工具（過期日計算）
+│   └── storage.ts               # IndexedDB 離線存儲
 ├── context/
-│   └── FoodContext.tsx       # 全局狀態（React Context）
+│   └── FoodContext.tsx          # 全局 React Context 狀態管理
 ├── hooks/
-│   └── useFoodItems.ts       # CRUD 操作
+│   └── useFoodItems.ts          # 自訂 Hook（CRUD 操作）
 └── types/
-    └── index.ts              # TypeScript 類型定義
+    └── index.ts                 # 共用 TypeScript 介面
 ```
 
-### 資料流
-1. 用戶拍照/上傳圖片 → 壓縮至 <2MB
-2. POST 到 `/api/gemini` → Gemini Vision 提取 `{product_name, expiry_date, confidence}`
-3. 用戶在 Modal 中確認（可編輯欄位）
-4. 儲存到 Firestore + IndexedDB（離線支援）
-5. 儀表板按過期日排序顯示，顏色編碼
-
-### 過期狀態邏輯
-- **紅燈（緊急）：** ≤7 天 - 置頂顯示，字體放大
-- **黃燈（注意）：** 8-30 天
-- **綠燈（安全）：** >30 天
-
-## UI 設計規範
-
-- **字體大小：** 內文 18px (`text-lg`)，按鈕 24px+ (`text-2xl`)，標題 32px (`text-4xl`)
-- **觸控區域：** 最小 56x56px，相機按鈕 80x80px
-- **對比度：** 7:1 WCAG AAA 標準
-- **顏色：** 避免僅用紅/綠區分 - 必須搭配圖標 + 文字標籤
-- **語言：** 繁體中文，親切語氣（例如：「趁新鮮快吃！」）
-- **互動：** 不依賴 hover 效果，點擊時需有清晰視覺反饋
-
-## 環境變數
-
-建立 `.env.local`：
-```env
-NEXT_PUBLIC_FIREBASE_API_KEY=xxx
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=xxx.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=xxx
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=xxx.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=xxx
-NEXT_PUBLIC_FIREBASE_APP_ID=xxx
-GEMINI_API_KEY=xxx
-```
-
-注意：`GEMINI_API_KEY`（無 NEXT_PUBLIC_ 前綴）- 僅供伺服器端 API 路由使用。
-
-## 關鍵類型定義
+### 關鍵型別定義
 
 ```typescript
 interface FoodItem {
   id: string
   product_name: string
-  expiry_date: string        // YYYY-MM-DD
+  expiry_date: string        // YYYY-MM-DD 格式
   days_until_expiry: number
   status: 'red' | 'yellow' | 'green'
   image_url: string
   confidence: number
   created_at: Date
   updated_at: Date
+  userId: string             // 關鍵：使用 auth.uid，而非 localStorage
 }
 
 interface GeminiResponse {
@@ -163,10 +143,98 @@ interface GeminiResponse {
 }
 ```
 
-## 相關文件
+---
 
-- `SECURITY.md` - **安全審查報告** (2025-12-19)：已識別 2 個 CRITICAL 和 6 個 MEDIUM 級別安全問題，含改進方案
-- `PROJECT_PLAN.md` - 完整產品規格與里程碑
-- `ARCHITECTURE.md` - 詳細系統設計
-- `DEVELOPMENT_GUIDE.md` - 設置指南與故障排除
-- `CHECKLIST.md` - 各階段完成檢查清單
+## 6. 資料流與核心邏輯
+
+### 用戶使用流程
+
+1. **拍攝**：用戶點擊相機按鈕 → ImageUpload 元件 → 拍攝或上傳檔案
+2. **上傳**：圖片壓縮至 <2MB → POST 到 `/api/gemini`
+3. **AI 識別**：Gemini Vision API 提取 {product_name, expiry_date, confidence}
+4. **確認**：用戶看到 ConfirmationModal → 編輯（如需要）→ 確認
+5. **存儲**：保存至 Firestore + IndexedDB（離線備份）
+6. **顯示**：庫存儀表板按過期日期排序，依狀態著色
+
+### 過期狀態邏輯
+
+```typescript
+// 過期狀態計算（見 src/lib/date.ts）
+紅燈 (🔴)：  ≤ 7 天   → 置頂顯示，字體放大，「趁新鮮快吃！」
+黃燈 (🟡)：  8-30 天 → 正常顯示
+綠燈 (🟢)：  > 30 天 → 底部顯示，「新鮮」
+```
+
+---
+
+## 7. 安全性與遵循檢查清單
+
+### 🔴 關鍵（生產前必須修復）
+
+- [ ] 實施 Firebase Anonymous Auth（替換 localStorage userID）
+- [ ] 部署 Firestore Security Rules
+- [ ] 部署 Firebase Storage Security Rules
+- [ ] 添加 API 速率限制（防止成本超支）
+- [ ] 添加輸入驗證至 `/api/gemini`
+
+### 🟡 重要（公開前必須修復）
+
+- [ ] 實施結構化錯誤日誌
+- [ ] 添加圖片 MIME 類型驗證
+- [ ] 強制執行檔案大小限制
+- [ ] 改進使用者錯誤訊息
+
+### 🟢 選項性（未來優化）
+
+- [ ] 效能監控（Lighthouse）
+- [ ] WebSocket 實時同步
+- [ ] Cloud Functions 複雜邏輯
+
+**完整安全詳情**：參考 `SECURITY.md` （更新於 2025-12-19）
+
+---
+
+## 8. 開始任務時的檢查清單
+
+**永遠先做這些事：**
+
+1. 閱讀 `docs/CURRENT_STATUS.md`（2 分鐘） - 了解當前狀態
+2. 檢查 `SECURITY.md` 相關漏洞 - 避免引入新的安全風險
+3. 驗證 `PROJECT_PLAN.md` 或其他相關文檔 - 確認需求
+4. 自問：**「這個變更是否影響安全性或資料流？」**
+
+**實現期間：**
+
+- 使用 TypeScript 嚴格型別（禁用 `any`）
+- 編寫解釋「為何」而非「是什麼」的註解
+- 在行動裝置上測試（響應式設計）
+- 提交前執行 `npm run lint:fix`
+
+**提交前：**
+
+- 確認：`npm run build` 成功
+- 確認：`npm run lint` 通過
+- 確認：程式碼中沒有 TODO
+- 編寫有意義的 commit 訊息
+
+---
+
+## 9. 快速參考表
+
+| 需要什麼？ | 檔案 |
+|-----------|------|
+| 當前工作狀況 | `docs/CURRENT_STATUS.md` ← **從這裡開始！** |
+| 架構決策 | `docs/architecture.md` |
+| 代碼組織 | `docs/code_organization.md` |
+| 功能規格 | `PROJECT_PLAN.md` |
+| 安全問題 | `SECURITY.md` |
+| 設置與故障排除 | `docs/development_guide.md` |
+| 測試策略 | `docs/testing_strategy.md` |
+| 離線實現 | `docs/offline_strategy.md` |
+| 資料庫 Schema | `docs/db_schema.md` （待建立） |
+| API 端點 | `docs/api_reference.md` （待建立） |
+
+---
+
+**最後更新**：2025-12-19
+**格式**：繁體中文（台灣）+ 英文代碼
