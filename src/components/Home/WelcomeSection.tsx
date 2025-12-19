@@ -13,7 +13,7 @@ export function WelcomeSection() {
       {/* Camera button placeholder - will be implemented in Phase 2 */}
       <div className="flex justify-center">
         <button
-          className={CAMERA_BUTTON.style}
+          className={CAMERA_BUTTON.base}
           style={CAMERA_BUTTON.size}
           disabled
         >

@@ -61,5 +61,5 @@ export const STATISTICS_CARD = {
 // 相機按鈕
 export const CAMERA_BUTTON = {
   size: { width: '80px', height: '80px' },
-  style: 'bg-green-600 hover:bg-green-700 text-white font-bold rounded-full shadow-lg flex items-center gap-3',
+  base: 'bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full shadow-lg transition-all duration-200 active:scale-95 flex items-center justify-center',
 } as const
